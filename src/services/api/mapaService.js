@@ -98,11 +98,12 @@ export class MapaService {
       const parqueaderos = {}
 
       puntosConInfo.forEach(punto => {
-        if (punto.estructura) {
-          estructuras[punto.id_punto_exterior] = punto.estructura
+        // Corregir: tomar el primer elemento del array si existe
+        if (punto.estructura && punto.estructura.length > 0) {
+          estructuras[punto.id_punto_exterior] = punto.estructura[0]
         }
-        if (punto.parqueadero) {
-          parqueaderos[punto.id_punto_exterior] = punto.parqueadero
+        if (punto.parqueadero && punto.parqueadero.length > 0) {
+          parqueaderos[punto.id_punto_exterior] = punto.parqueadero[0]
         }
       })
 

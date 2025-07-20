@@ -118,7 +118,7 @@ export const useMap = () => {
 
       setPuntosExteriores(data.puntos || [])
       setEstructuras(data.estructuras || {})
-      setParqueaderos(data.parqueaderos || {}) // Agregar línea
+      setParqueaderos(data.parqueaderos || {})
       setImagenes(data.imagenes || {})
     } catch (error) {
       console.error('Error:', error)
@@ -137,7 +137,7 @@ export const useMap = () => {
     // Estado
     puntosExteriores,
     estructuras,
-    parqueaderos, // Agregar a return
+    parqueaderos,
     imagenes,
     userLocation,
     selectedDestination,

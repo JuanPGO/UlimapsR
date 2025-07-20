@@ -11,7 +11,7 @@ export class PisoService extends BaseService {
       const { data, error } = await supabase
         .from('piso')
         .select(`
-          id_piso:id,
+          id_piso,
           nivel,
           estructura(bloque, punto_interes_exterior(nombre)),
           plano
