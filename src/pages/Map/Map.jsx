@@ -111,8 +111,8 @@ const Map = () => {
                                 <Popup>
                                     <MapPopup
                                         punto={punto}
-                                        estructura={estructuras[punto.id]}
-                                        imagen={imagenes[punto.id]}
+                                        estructura={estructuras[punto.id_punto_exterior]}
+                                        imagen={imagenes[punto.id_punto_exterior]}
                                         selectedDestination={selectedDestination}
                                         activeMarkerId={activeMarkerId}
                                         onStartNavigation={handleStartNavigation}
