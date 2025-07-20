@@ -9,9 +9,7 @@ const StructureDetail = () => {
     const {
         puntoExterior,
         imagenes,
-        estructura,
         pisos,
-        puntosInteriores,
         soloMostrarFotos,
         loading,
         error,
@@ -85,7 +83,7 @@ const StructureDetail = () => {
                 {soloMostrarFotos ? (
                     // Si solo debe mostrar fotos (parqueaderos, canchas, entradas)
                     <Tabs defaultActiveKey="fotos" id="simple-tabs" className="mb-3 tabs" fill>
-                        <Tab eventKey="fotos" title="Fotos">
+                        <Tab eventKey="fotos" title="Fotos" className="tab-pane">
                             {imagenes && imagenes.length > 0 ? (
                                 <Carousel className="carouselContainerImages">
                                     {imagenes.map((imagen) => (
