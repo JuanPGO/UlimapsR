@@ -6,7 +6,7 @@ export class AuxiliarService {
     try {
       const { data, error } = await supabase
         .from('tipo')
-        .select('nombre_tipo as nombreTipo')
+        .select('id_tipo, nombre_tipo')
         .order('nombre_tipo')
 
       if (error) throw error
@@ -38,12 +38,12 @@ export class AuxiliarService {
     }
   }
 
-  // Cargar puntos exteriores para select
+  // Cargar puntos exteriores para select - CORREGIDO
   static async getPuntosExteriorSelect() {
     try {
       const { data, error } = await supabase
         .from('punto_interes_exterior')
-        .select('nombre')
+        .select('id_punto_exterior, nombre')
         .order('nombre')
 
       if (error) throw error
@@ -59,7 +59,7 @@ export class AuxiliarService {
     try {
       const { data, error } = await supabase
         .from('estructura')
-        .select('bloque')
+        .select('id_estructura, bloque')
         .order('bloque')
 
       if (error) throw error
@@ -80,7 +80,7 @@ export class AuxiliarService {
     try {
       const { data, error } = await supabase
         .from('piso')
-        .select('plano')
+        .select('id_piso, plano')
         .order('plano')
 
       if (error) throw error

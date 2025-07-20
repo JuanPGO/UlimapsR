@@ -7,6 +7,7 @@ body {
     min-height: 100vh;
     margin: 0;
     font-family: "Kaisei Decol", serif;
+    background: radial-gradient(#E2001A,#580101);
 }
 
 .contenedor-bienvenida1 {
