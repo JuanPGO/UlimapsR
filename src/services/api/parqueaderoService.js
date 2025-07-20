@@ -10,7 +10,7 @@ export class ParqueaderoService extends BaseService {
       const { data, error } = await this.supabase
         .from('parqueadero')
         .select(`
-          id_parqueadero:id,
+          id_parqueadero,
           punto_interes_exterior(nombre),
           vehiculo,
           tipo(nombre_tipo)
