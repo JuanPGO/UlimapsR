@@ -1,0 +1,52 @@
+import { BaseService } from './baseService.js'
+
+export class PuntoExteriorService extends BaseService {
+  constructor() {
+    super('punto_interes_exterior')
+  }
+
+  async getAll() {
+    return super.getAll(
+      'id_punto_exterior as id, nombre, latitud, longitud, activo',
+      'nombre'
+    )
+  }
+
+  async create(data) {
+    // Verificar si el ID ya existe
+    const { data: existing } = await super.getById(data.id, 'id_punto_exterior')
+    if (existing) {
+      throw new Error(`El ID ${data.id} ya está en uso.`)
+    }
+
+    const createData = {
+      id_punto_exterior: data.id,
+      nombre: data.nombre,
+      latitud: data.latitud,
+      longitud: data.longitud,
+      activo: data.activo,
+      id_mapa: data.id_mapa || 1
+    }
+
+    return super.create(createData)
+  }
+
+  async update(id, data) {
+    const updateData = {
+      nombre: data.nombre,
+      latitud: data.latitud,
+      longitud: data.longitud,
+      activo: data.activo
+    }
+
+    return super.update(id, updateData, 'id_punto_exterior')
+  }
+
+  async updateEstado(id, activo) {
+    return super.update(id, { activo }, 'id_punto_exterior')
+  }
+
+  async delete(id) {
+    return super.delete(id, 'id_punto_exterior')
+  }
+}

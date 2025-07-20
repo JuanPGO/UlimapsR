@@ -1,13 +1,13 @@
-// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Pages
 import Welcome from './pages/Welcome/Welcome.jsx';
 import Login from './pages/Login/Login.jsx';
-// import CRUD from './pages/CRUD/CRUD.jsx'; // Próximo a migrar
+import CRUD from './pages/CRUD/CRUD.jsx';
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
 
 function App() {
@@ -18,13 +18,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="/login" element={<Login />} />
-            {/* 
             <Route path="/crud" element={
               <ProtectedRoute>
                 <CRUD />
               </ProtectedRoute>
             } />
-            */}
           </Routes>
           <ToastContainer />
         </div>

@@ -1,0 +1,135 @@
+@import url("https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&display=swap");
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "Kaisei Decol", serif !important;
+  background: #f1eeee;
+}
+
+.contenedorCrud {
+  background: #ffffff;
+  width: 90vw;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.navHeader {
+  background-color: #616060;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.navTitulo {
+  flex-grow: 1;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.navTitulo h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.navExit {
+  margin-left: auto;
+  padding-right: 2rem;
+}
+
+.crudContent {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.table {
+  margin-bottom: 1rem;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  border-top: none;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.pagination {
+  margin-top: 1rem;
+}
+
+/* Modal customizations */
+.modal-header {
+  background-color: #616060;
+  color: white;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #616060;
+  box-shadow: 0 0 0 0.2rem rgba(97, 96, 96, 0.25);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contenedorCrud {
+    width: 95vw;
+    height: 95vh;
+  }
+  
+  .navHeader {
+    padding: 0.5rem;
+  }
+  
+  .navTitulo h1 {
+    font-size: 1.2rem;
+  }
+  
+  .crudContent {
+    padding: 1rem;
+  }
+}
+
+/* Loading spinner */
+.spinner-border {
+  color: #616060;
+}
+
+/* Button styles */
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-primary {
+  background-color: #616060;
+  border-color: #616060;
+}
+
+.btn-primary:hover {
+  background-color: #4a4949;
+  border-color: #4a4949;
+}
