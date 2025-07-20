@@ -58,8 +58,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100%;
+    width: 100%;
     color: white;
     font-family: "Kaisei Decol", serif;
+    background: white; /* Fondo blanco para el área del mapa */
+    color: #333; /* Cambiar color del texto para contraste */
 }
 
 .loading-container p {

@@ -48,11 +48,29 @@ const Map = () => {
     if (loading) {
         return (
             <div className="contenedor-bienvenidamap">
+                {/* Header Navigation */}
+                <div className="navegacionDiv">
+                    <div className="boton-regreso">
+                        <Link to="/">
+                            <FontAwesomeIcon 
+                                icon={faArrowRightFromBracket} 
+                                rotation={180} 
+                                style={{ color: 'white' }}
+                            />
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Loading Container - ocupa el área del mapa */}
                 <div className="loading-container">
                     <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Cargando mapa...</span>
                     </div>
                     <p>Cargando mapa del campus...</p>
+                </div>
+
+                {/* Footer Navigation */}
+                <div className="navegacionDiv2">
                 </div>
             </div>
         )
