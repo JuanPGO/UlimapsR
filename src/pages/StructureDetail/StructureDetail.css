@@ -6,6 +6,7 @@ body {
     display: flex;
     justify-content: center;
     justify-items: center;
+    background: radial-gradient(#E2001A,#580101);
 }
 
 .contenedorMore {

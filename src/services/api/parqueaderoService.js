@@ -1,13 +1,10 @@
-import { BaseService } from './baseService.js'
+import { supabase } from '../supabase/client.js'
 
-export class ParqueaderoService extends BaseService {
-  constructor() {
-    super('parqueadero')
-  }
+export class ParqueaderoService {
 
   async getAll() {
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('parqueadero')
         .select(`
           id_parqueadero,
@@ -15,15 +12,15 @@ export class ParqueaderoService extends BaseService {
           vehiculo,
           tipo(nombre_tipo)
         `)
-        .order('id_parqueadero')
+        .order('id_parqueadero', { ascending: true })
 
       if (error) throw error
       
       const formattedData = data?.map(item => ({
-        id: item.id,
+        id: item.id_parqueadero,
         nombre: item.punto_interes_exterior?.nombre,
         vehiculo: item.vehiculo,
-        nombreTipo: item.tipo?.nombre_tipo
+        nombre_tipo: item.tipo?.nombre_tipo
       }))
 
       return { data: formattedData, error: null }
@@ -34,57 +31,104 @@ export class ParqueaderoService extends BaseService {
   }
 
   async create(data) {
-    // Buscar IDs necesarios
-    const { data: puntoExt } = await this.supabase
-      .from('punto_interes_exterior')
-      .select('id_punto_exterior')
-      .eq('nombre', data.nombre)
-      .single()
+    try {
+      // Buscar IDs necesarios (sin .single())
+      const { data: puntoExtResult, error: puntoExtError } = await supabase
+        .from('punto_interes_exterior')
+        .select('id_punto_exterior')
+        .eq('nombre', data.nombre)
+        .limit(1)
 
-    const { data: tipo } = await this.supabase
-      .from('tipo')
-      .select('id_tipo')
-      .eq('nombre_tipo', data.nombreTipo)
-      .single()
+      if (puntoExtError) {
+        return { data: null, error: puntoExtError }
+      }
 
-    if (!puntoExt || !tipo) {
-      throw new Error('Punto exterior o tipo no encontrado')
+      const { data: tipoResult, error: tipoError } = await supabase
+        .from('tipo')
+        .select('id_tipo')
+        .eq('nombre_tipo', data.nombre_tipo)
+        .limit(1)
+
+      if (tipoError) {
+        return { data: null, error: tipoError }
+      }
+
+      if (!puntoExtResult || puntoExtResult.length === 0) {
+        throw new Error('Punto exterior no encontrado')
+      }
+
+      if (!tipoResult || tipoResult.length === 0) {
+        throw new Error('Tipo no encontrado')
+      }
+
+      const createData = {
+        id_parqueadero: data.id,
+        id_punto_exterior: puntoExtResult[0].id_punto_exterior,
+        vehiculo: data.vehiculo,
+        id_tipo: tipoResult[0].id_tipo
+      }
+
+      const { data: result, error } = await supabase
+        .from('parqueadero')
+        .insert(createData)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
+    } catch (error) {
+      console.error('Error creando parqueadero:', error)
+      return { data: null, error }
     }
-
-    const createData = {
-      id_parqueadero: data.id,
-      id_punto_exterior: puntoExt.id_punto_exterior,
-      vehiculo: data.vehiculo,
-      id_tipo: tipo.id_tipo
-    }
-
-    return super.create(createData)
   }
 
   async update(id, data) {
-    // Similar lógica para update
-    const { data: puntoExt } = await this.supabase
-      .from('punto_interes_exterior')
-      .select('id_punto_exterior')
-      .eq('nombre', data.nombre)
-      .single()
+    try {
+      // Similar lógica para update (sin .single())
+      const { data: puntoExtResult } = await supabase
+        .from('punto_interes_exterior')
+        .select('id_punto_exterior')
+        .eq('nombre', data.nombre)
+        .limit(1)
 
-    const { data: tipo } = await this.supabase
-      .from('tipo')
-      .select('id_tipo')
-      .eq('nombre_tipo', data.nombreTipo)
-      .single()
+      const { data: tipoResult } = await supabase
+        .from('tipo')
+        .select('id_tipo')
+        .eq('nombre_tipo', data.nombre_tipo)
+        .limit(1)
 
-    const updateData = {
-      id_punto_exterior: puntoExt?.id_punto_exterior,
-      vehiculo: data.vehiculo,
-      id_tipo: tipo?.id_tipo
+      const updateData = {
+        id_punto_exterior: puntoExtResult?.[0]?.id_punto_exterior,
+        vehiculo: data.vehiculo,
+        id_tipo: tipoResult?.[0]?.id_tipo
+      }
+
+      const { data: result, error } = await supabase
+        .from('parqueadero')
+        .update(updateData)
+        .eq('id_parqueadero', id)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
+    } catch (error) {
+      console.error('Error actualizando parqueadero:', error)
+      return { data: null, error }
     }
-
-    return super.update(id, updateData, 'id_parqueadero')
   }
 
   async delete(id) {
-    return super.delete(id, 'id_parqueadero')
+    try {
+      const { data, error } = await supabase
+        .from('parqueadero')
+        .delete()
+        .eq('id_parqueadero', id)
+        .select()
+
+      if (error) throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('Error eliminando parqueadero:', error)
+      return { data: null, error }
+    }
   }
 }
