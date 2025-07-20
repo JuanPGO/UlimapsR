@@ -7,7 +7,7 @@ export class MapaService {
       const { data, error } = await supabase
         .from('punto_interes_exterior')
         .select(`
-          id_punto_exterior as id,
+          id_punto_exterior,
           nombre,
           latitud,
           longitud,
@@ -72,10 +72,10 @@ export class MapaService {
 
       // Cargar estructuras e imágenes en paralelo
       const estructurasPromises = puntos.map(punto => 
-        this.getEstructuraPorPunto(punto.id)
+        this.getEstructuraPorPunto(punto.id_punto_exterior)
       )
       const imagenesPromises = puntos.map(punto => 
-        this.getPrimeraImagenPorPunto(punto.id)
+        this.getPrimeraImagenPorPunto(punto.id_punto_exterior)
       )
 
       const [estructurasResults, imagenesResults] = await Promise.all([
@@ -89,10 +89,10 @@ export class MapaService {
 
       puntos.forEach((punto, index) => {
         if (estructurasResults[index].data) {
-          estructuras[punto.id] = estructurasResults[index].data
+          estructuras[punto.id_punto_exterior] = estructurasResults[index].data
         }
         if (imagenesResults[index].data) {
-          imagenes[punto.id] = imagenesResults[index].data
+          imagenes[punto.id_punto_exterior] = imagenesResults[index].data
         }
       })
 

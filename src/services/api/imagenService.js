@@ -11,7 +11,7 @@ export class ImagenService extends BaseService {
       const { data, error } = await supabase
         .from('imagen')
         .select(`
-          id_imagen as id,
+          id_imagen:id,
           nombre,
           punto_interes_exterior(nombre)
         `)

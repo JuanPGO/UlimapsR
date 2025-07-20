@@ -7,7 +7,7 @@ export class EstructuraService extends BaseService {
 
   async getAll() {
     return super.getAll(`
-      e.id_estructura as id,
+      e.id_estructura:id,
       e.bloque,
       pe.nombre,
       t.nombre_tipo as "nombreTipo"
@@ -19,7 +19,7 @@ export class EstructuraService extends BaseService {
       const { data, error } = await this.supabase
         .from('estructura')
         .select(`
-          id_estructura as id,
+          id_estructura:id,
           bloque,
           punto_interes_exterior(nombre),
           tipo(nombre_tipo)

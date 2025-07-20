@@ -11,7 +11,7 @@ export class PuntoInteriorService extends BaseService {
       const { data, error } = await supabase
         .from('punto_interes_interior')
         .select(`
-          id_punto_interior as id,
+          id_punto_interior:id,
           nombre,
           activo,
           tipo(nombre_tipo),

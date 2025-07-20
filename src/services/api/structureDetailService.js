@@ -23,7 +23,7 @@ export class StructureDetailService {
     try {
       const { data, error } = await supabase
         .from('imagen')
-        .select('id_imagen as id, nombre')
+        .select('id_imagen:id, nombre')
         .eq('id_punto_exterior', idPuntoExterior)
         .order('id_imagen')
 
@@ -80,7 +80,7 @@ export class StructureDetailService {
       const { data, error } = await supabase
         .from('punto_interes_interior')
         .select(`
-          id_punto_interior as id,
+          id_punto_interior:id,
           nombre,
           activo,
           tipo(nombre_tipo),

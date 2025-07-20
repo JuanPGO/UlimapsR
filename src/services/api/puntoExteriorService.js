@@ -7,7 +7,7 @@ export class PuntoExteriorService extends BaseService {
 
   async getAll() {
     return super.getAll(
-      'id_punto_exterior as id, nombre, latitud, longitud, activo',
+      'id_punto_exterior:id, nombre, latitud, longitud, activo',
       'nombre'
     )
   }
