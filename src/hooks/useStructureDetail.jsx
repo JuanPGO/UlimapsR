@@ -60,7 +60,7 @@ export const useStructureDetail = () => {
 
   const renderTableRows = useCallback(() => {
     return currentItems.map((punto, index) => (
-      <tr key={punto.id}>
+      <tr key={punto.id_punto_interior}>
         <td className="contenido text-center">{indexOfFirstItem + index + 1}</td>
         <td className="contenido text-center">{punto.nombreTipo || 'N/A'}</td>
         <td className="contenido text-center">{punto.nombre}</td>

@@ -93,7 +93,7 @@ export const useMap = () => {
       lat: punto.latitud,
       lng: punto.longitud
     })
-    setActiveMarkerId(punto.id)
+    setActiveMarkerId(punto.id_punto_exterior)
     showRouteInfoToast('Calculando ruta...')
   }, [userLocation, calculateDistance, showInfoToast, showRouteInfoToast])
 

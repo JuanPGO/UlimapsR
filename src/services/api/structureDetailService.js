@@ -94,7 +94,7 @@ export class StructureDetailService {
       
       // Formatear datos
       const formattedData = data?.map(item => ({
-        id: item.id,
+        id: item.id_punto_interior,
         nombre: item.nombre,
         nombreTipo: item.tipo?.nombre_tipo,
         nivel: item.piso?.nivel,

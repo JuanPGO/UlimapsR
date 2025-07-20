@@ -104,7 +104,7 @@ const Map = () => {
                     {puntosExteriores.map((punto) => (
                         punto.activo && (
                             <Marker 
-                                key={punto.id}
+                                key={punto.id_punto_exterior}
                                 position={[punto.latitud, punto.longitud]} 
                                 icon={customIcon}
                             >

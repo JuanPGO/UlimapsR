@@ -43,7 +43,7 @@ const MapPopup = ({
           </div>
           <div className="buttonPop">
             <Link 
-              to={`/structure/${punto.id}`} 
+              to={`/structure/${punto.id_punto_exterior}`} 
               className="boton-out no-underline"
             >
               <button>
@@ -51,7 +51,7 @@ const MapPopup = ({
                 <span>Ver más</span>
               </button>
             </Link>
-            {(!selectedDestination || activeMarkerId !== punto.id) && (
+            {(!selectedDestination || activeMarkerId !== punto.id_punto_exterior) && (
               <button
                 onClick={() => onStartNavigation(punto)}
                 className="route-button"
@@ -69,7 +69,7 @@ const MapPopup = ({
 
 MapPopup.propTypes = {
   punto: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id_punto_exterior: PropTypes.number.isRequired,
     nombre: PropTypes.string.isRequired,
     latitud: PropTypes.number.isRequired,
     longitud: PropTypes.number.isRequired
