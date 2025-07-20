@@ -77,31 +77,56 @@ export class StructureDetailService {
   // Obtener puntos interiores activos
   static async getPuntosInterioresByPunto(idPuntoExterior) {
     try {
+      // Primero obtenemos la estructura asociada al punto exterior
+      const { data: estructura, error: estructuraError } = await supabase
+        .from('estructura')
+        .select('id_estructura')
+        .eq('id_punto_exterior', idPuntoExterior)
+        .single()
+
+      if (estructuraError && estructuraError.code !== 'PGRST116') {
+        throw estructuraError
+      }
+
+      // Si no hay estructura, no hay puntos interiores
+      if (!estructura) {
+        return { data: [], error: null }
+      }
+
+      // Ahora obtenemos los puntos interiores de esa estructura
       const { data, error } = await supabase
         .from('punto_interes_interior')
         .select(`
           id_punto_interior,
           nombre,
           activo,
-          tipo(nombre_tipo),
-          piso(nivel, estructura!inner(id_punto_exterior))
+          tipo!inner(nombre_tipo),
+          piso!inner(nivel, id_estructura)
         `)
         .eq('activo', true)
-        .eq('piso.estructura.id_punto_exterior', idPuntoExterior)
-        .order('piso.nivel', 'nombre')
+        .eq('piso.id_estructura', estructura.id_estructura)
+        // Removemos el .order() de aquí porque no funciona con joins
 
       if (error) throw error
       
       // Formatear datos
       const formattedData = data?.map(item => ({
-        id: item.id_punto_interior,
+        id_punto_interior: item.id_punto_interior,
         nombre: item.nombre,
         nombreTipo: item.tipo?.nombre_tipo,
         nivel: item.piso?.nivel,
         activo: item.activo
       }))
 
-      return { data: formattedData, error: null }
+      // Ordenar los datos por nivel de piso en JavaScript
+      const sortedData = formattedData?.sort((a, b) => {
+        // Convertir niveles a números para ordenamiento correcto
+        const nivelA = parseInt(a.nivel) || 0
+        const nivelB = parseInt(b.nivel) || 0
+        return nivelA - nivelB
+      })
+
+      return { data: sortedData, error: null }
     } catch (error) {
       console.error('Error obteniendo puntos interiores:', error)
       return { data: null, error }
