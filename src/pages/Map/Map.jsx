@@ -32,6 +32,7 @@ const Map = () => {
     const {
         puntosExteriores,
         estructuras,
+        parqueaderos, // Agregar esta línea
         imagenes,
         userLocation,
         selectedDestination,
@@ -112,6 +113,7 @@ const Map = () => {
                                     <MapPopup
                                         punto={punto}
                                         estructura={estructuras[punto.id_punto_exterior]}
+                                        parqueadero={parqueaderos[punto.id_punto_exterior]} // Agregar esta línea
                                         imagen={imagenes[punto.id_punto_exterior]}
                                         selectedDestination={selectedDestination}
                                         activeMarkerId={activeMarkerId}

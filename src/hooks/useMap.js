@@ -8,6 +8,7 @@ const MIN_DISTANCE = 300 // metros
 export const useMap = () => {
   const [puntosExteriores, setPuntosExteriores] = useState([])
   const [estructuras, setEstructuras] = useState({})
+  const [parqueaderos, setParqueaderos] = useState({}) // Agregar estado para parqueaderos
   const [imagenes, setImagenes] = useState({})
   const [userLocation, setUserLocation] = useState(null)
   const [selectedDestination, setSelectedDestination] = useState(null)
@@ -117,6 +118,7 @@ export const useMap = () => {
 
       setPuntosExteriores(data.puntos || [])
       setEstructuras(data.estructuras || {})
+      setParqueaderos(data.parqueaderos || {}) // Agregar línea
       setImagenes(data.imagenes || {})
     } catch (error) {
       console.error('Error:', error)
@@ -135,6 +137,7 @@ export const useMap = () => {
     // Estado
     puntosExteriores,
     estructuras,
+    parqueaderos, // Agregar a return
     imagenes,
     userLocation,
     selectedDestination,

@@ -4,38 +4,44 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfo, faRoute } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
 
-const MapPopup = ({ 
-  punto, 
-  estructura, 
-  imagen, 
-  selectedDestination, 
-  activeMarkerId, 
-  onStartNavigation 
-}) => {
+const MapPopup = ({ punto, estructura, parqueadero, imagen, selectedDestination, activeMarkerId, onStartNavigation }) => {
   return (
     <div className="contenedorPop">
       <div className="headerPop">
         <span>{punto.nombre}</span>
       </div>
       <div className="bodyPop">
-        <div className="imagePop">
-          {imagen && imagen.nombre ? (
+        {imagen ? (
+          <div className="imagePop">
             <img 
               src={`/assets/images/fotos/exterior/${imagen.nombre}.jpg`} 
               alt={punto.nombre}
+              onError={(e) => {
+                e.target.style.display = 'none'
+                e.target.nextElementSibling.style.display = 'flex'
+              }}
             />
-          ) : (
-            <div className="placeholder-image">
-              <span>No hay imagen disponible</span>
+            <div className="placeholder-image" style={{ display: 'none' }}>
+              Sin imagen disponible
             </div>
-          )}
-        </div>
-
+          </div>
+        ) : (
+          <div className="imagePop">
+            <div className="placeholder-image">
+              Sin imagen disponible
+            </div>
+          </div>
+        )}
+        
         <div className="infoPop">
           <div className="nomPop">
             {estructura && estructura.bloque ? (
               <span className="bloquePop">
                 {estructura.bloque}
+              </span>
+            ) : parqueadero ? (
+              <span className="parqueaderoPop">
+                Parqueadero - {parqueadero.vehiculo}
               </span>
             ) : (
               <span>{punto.nombre}</span>
@@ -76,6 +82,9 @@ MapPopup.propTypes = {
   }).isRequired,
   estructura: PropTypes.shape({
     bloque: PropTypes.string
+  }),
+  parqueadero: PropTypes.shape({
+    vehiculo: PropTypes.string
   }),
   imagen: PropTypes.shape({
     nombre: PropTypes.string

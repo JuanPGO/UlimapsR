@@ -11,7 +11,9 @@ export class MapaService {
           nombre,
           latitud,
           longitud,
-          activo
+          activo,
+          estructura(id_estructura, bloque),
+          parqueadero(id_parqueadero, vehiculo)
         `)
         .eq('activo', true)
         .order('nombre')
@@ -62,35 +64,58 @@ export class MapaService {
   // Cargar todos los datos del mapa de una vez
   static async cargarDatosMapa() {
     try {
-      // Obtener puntos exteriores
-      const { data: puntos, error: errorPuntos } = await this.getPuntosExterioresActivos()
+      // Obtener puntos exteriores con sus estructuras y parqueaderos en una sola consulta
+      const { data: puntosConInfo, error: errorPuntos } = await supabase
+        .from('punto_interes_exterior')
+        .select(`
+          id_punto_exterior,
+          nombre,
+          latitud,
+          longitud,
+          activo,
+          estructura(id_estructura, bloque),
+          parqueadero(id_parqueadero, vehiculo)
+        `)
+        .eq('activo', true)
+        .order('nombre')
+
       if (errorPuntos) throw errorPuntos
 
-      if (!puntos || puntos.length === 0) {
-        return { data: { puntos: [], estructuras: {}, imagenes: {} }, error: null }
+      if (!puntosConInfo || puntosConInfo.length === 0) {
+        return { data: { puntos: [], estructuras: {}, parqueaderos: {}, imagenes: {} }, error: null }
       }
 
-      // Cargar estructuras e imágenes en paralelo
-      const estructurasPromises = puntos.map(punto => 
-        this.getEstructuraPorPunto(punto.id_punto_exterior)
-      )
+      // Separar puntos, estructuras y parqueaderos
+      const puntos = puntosConInfo.map(punto => ({
+        id_punto_exterior: punto.id_punto_exterior,
+        nombre: punto.nombre,
+        latitud: punto.latitud,
+        longitud: punto.longitud,
+        activo: punto.activo
+      }))
+
+      const estructuras = {}
+      const parqueaderos = {}
+
+      puntosConInfo.forEach(punto => {
+        if (punto.estructura) {
+          estructuras[punto.id_punto_exterior] = punto.estructura
+        }
+        if (punto.parqueadero) {
+          parqueaderos[punto.id_punto_exterior] = punto.parqueadero
+        }
+      })
+
+      // Cargar imágenes para todos los puntos
       const imagenesPromises = puntos.map(punto => 
         this.getPrimeraImagenPorPunto(punto.id_punto_exterior)
       )
 
-      const [estructurasResults, imagenesResults] = await Promise.all([
-        Promise.all(estructurasPromises),
-        Promise.all(imagenesPromises)
-      ])
+      const imagenesResults = await Promise.all(imagenesPromises)
 
-      // Formatear resultados
-      const estructuras = {}
+      // Formatear resultados de imágenes
       const imagenes = {}
-
       puntos.forEach((punto, index) => {
-        if (estructurasResults[index].data) {
-          estructuras[punto.id_punto_exterior] = estructurasResults[index].data
-        }
         if (imagenesResults[index].data) {
           imagenes[punto.id_punto_exterior] = imagenesResults[index].data
         }
@@ -100,6 +125,7 @@ export class MapaService {
         data: {
           puntos,
           estructuras,
+          parqueaderos,
           imagenes
         },
         error: null
