@@ -1,10 +1,6 @@
-import { BaseService } from './baseService.js'
 import { supabase } from '../supabase/client.js'
 
-export class PisoService extends BaseService {
-  constructor() {
-    super('piso')
-  }
+export class PisoService {
 
   async getAll() {
     try {
@@ -37,25 +33,35 @@ export class PisoService extends BaseService {
 
   async create(data) {
     try {
-      // Buscar ID de estructura por bloque
-      const { data: estructura } = await supabase
+      // Buscar ID de estructura por bloque (sin .single())
+      const { data: estructuraResult, error: estructuraError } = await supabase
         .from('estructura')
         .select('id_estructura')
         .eq('bloque', data.bloque)
-        .single()
+        .limit(1)
 
-      if (!estructura) {
+      if (estructuraError) {
+        return { data: null, error: estructuraError }
+      }
+
+      if (!estructuraResult || estructuraResult.length === 0) {
         throw new Error('Estructura no encontrada')
       }
 
       const createData = {
         id_piso: data.id,
         nivel: data.nivel,
-        id_estructura: estructura.id_estructura,
+        id_estructura: estructuraResult[0].id_estructura,
         plano: data.plano
       }
 
-      return super.create(createData)
+      const { data: result, error } = await supabase
+        .from('piso')
+        .insert(createData)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
     } catch (error) {
       console.error('Error creando piso:', error)
       return { data: null, error }
@@ -64,19 +70,26 @@ export class PisoService extends BaseService {
 
   async update(id, data) {
     try {
-      const { data: estructura } = await supabase
+      const { data: estructuraResult } = await supabase
         .from('estructura')
         .select('id_estructura')
         .eq('bloque', data.bloque)
-        .single()
+        .limit(1)
 
       const updateData = {
         nivel: data.nivel,
-        id_estructura: estructura?.id_estructura,
+        id_estructura: estructuraResult?.[0]?.id_estructura,
         plano: data.plano
       }
 
-      return super.update(id, updateData, 'id_piso')
+      const { data: result, error } = await supabase
+        .from('piso')
+        .update(updateData)
+        .eq('id_piso', id)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
     } catch (error) {
       console.error('Error actualizando piso:', error)
       return { data: null, error }
@@ -84,6 +97,18 @@ export class PisoService extends BaseService {
   }
 
   async delete(id) {
-    return super.delete(id, 'id_piso')
+    try {
+      const { data, error } = await supabase
+        .from('piso')
+        .delete()
+        .eq('id_piso', id)
+        .select()
+
+      if (error) throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('Error eliminando piso:', error)
+      return { data: null, error }
+    }
   }
 }

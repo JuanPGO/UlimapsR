@@ -1,10 +1,6 @@
-import { BaseService } from './baseService.js'
 import { supabase } from '../supabase/client.js'
 
-export class ImagenService extends BaseService {
-  constructor() {
-    super('imagen')
-  }
+export class ImagenService {
 
   async getAll() {
     try {
@@ -34,23 +30,33 @@ export class ImagenService extends BaseService {
 
   async create(data) {
     try {
-      const { data: puntoExt } = await supabase
+      const { data: puntoExtResult, error: puntoExtError } = await supabase
         .from('punto_interes_exterior')
         .select('id_punto_exterior')
         .eq('nombre', data.puntoExterior)
-        .single()
+        .limit(1)
 
-      if (!puntoExt) {
+      if (puntoExtError) {
+        return { data: null, error: puntoExtError }
+      }
+
+      if (!puntoExtResult || puntoExtResult.length === 0) {
         throw new Error('Punto exterior no encontrado')
       }
 
       const createData = {
         id_imagen: data.id,
         nombre: data.nombre,
-        id_punto_exterior: puntoExt.id_punto_exterior
+        id_punto_exterior: puntoExtResult[0].id_punto_exterior
       }
 
-      return super.create(createData)
+      const { data: result, error } = await supabase
+        .from('imagen')
+        .insert(createData)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
     } catch (error) {
       console.error('Error creando imagen:', error)
       return { data: null, error }
@@ -59,18 +65,25 @@ export class ImagenService extends BaseService {
 
   async update(id, data) {
     try {
-      const { data: puntoExt } = await supabase
+      const { data: puntoExtResult } = await supabase
         .from('punto_interes_exterior')
         .select('id_punto_exterior')
         .eq('nombre', data.puntoExterior)
-        .single()
+        .limit(1)
 
       const updateData = {
         nombre: data.nombre,
-        id_punto_exterior: puntoExt?.id_punto_exterior
+        id_punto_exterior: puntoExtResult?.[0]?.id_punto_exterior
       }
 
-      return super.update(id, updateData, 'id_imagen')
+      const { data: result, error } = await supabase
+        .from('imagen')
+        .update(updateData)
+        .eq('id_imagen', id)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
     } catch (error) {
       console.error('Error actualizando imagen:', error)
       return { data: null, error }
@@ -78,6 +91,18 @@ export class ImagenService extends BaseService {
   }
 
   async delete(id) {
-    return super.delete(id, 'id_imagen')
+    try {
+      const { data, error } = await supabase
+        .from('imagen')
+        .delete()
+        .eq('id_imagen', id)
+        .select()
+
+      if (error) throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('Error eliminando imagen:', error)
+      return { data: null, error }
+    }
   }
 }

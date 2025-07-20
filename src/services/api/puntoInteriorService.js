@@ -1,10 +1,6 @@
-import { BaseService } from './baseService.js'
 import { supabase } from '../supabase/client.js'
 
-export class PuntoInteriorService extends BaseService {
-  constructor() {
-    super('punto_interes_interior')
-  }
+export class PuntoInteriorService {
 
   async getAll() {
     try {
@@ -39,33 +35,51 @@ export class PuntoInteriorService extends BaseService {
 
   async create(data) {
     try {
-      // Buscar ID de tipo
-      const { data: tipo } = await supabase
+      // Buscar ID de tipo (sin .single())
+      const { data: tipoResult, error: tipoError } = await supabase
         .from('tipo')
         .select('id_tipo')
         .eq('nombre_tipo', data.nombre_tipo)
-        .single()
+        .limit(1)
 
-      // Buscar ID de piso
-      const { data: piso } = await supabase
+      if (tipoError) {
+        return { data: null, error: tipoError }
+      }
+
+      // Buscar ID de piso (sin .single())
+      const { data: pisoResult, error: pisoError } = await supabase
         .from('piso')
         .select('id_piso')
         .eq('plano', data.plano)
-        .single()
+        .limit(1)
 
-      if (!tipo || !piso) {
-        throw new Error('Tipo o piso no encontrado')
+      if (pisoError) {
+        return { data: null, error: pisoError }
+      }
+
+      if (!tipoResult || tipoResult.length === 0) {
+        throw new Error('Tipo no encontrado')
+      }
+
+      if (!pisoResult || pisoResult.length === 0) {
+        throw new Error('Piso no encontrado')
       }
 
       const createData = {
         id_punto_interior: data.id,
         nombre: data.nombre,
         activo: data.activo,
-        id_tipo: tipo.id_tipo,
-        id_piso: piso.id_piso
+        id_tipo: tipoResult[0].id_tipo,
+        id_piso: pisoResult[0].id_piso
       }
 
-      return super.create(createData)
+      const { data: result, error } = await supabase
+        .from('punto_interes_interior')
+        .insert(createData)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
     } catch (error) {
       console.error('Error creando punto interior:', error)
       return { data: null, error }
@@ -74,25 +88,32 @@ export class PuntoInteriorService extends BaseService {
 
   async update(id, data) {
     try {
-      const { data: tipo } = await supabase
+      const { data: tipoResult } = await supabase
         .from('tipo')
         .select('id_tipo')
         .eq('nombre_tipo', data.nombre_tipo)
-        .single()
+        .limit(1)
 
-      const { data: piso } = await supabase
+      const { data: pisoResult } = await supabase
         .from('piso')
         .select('id_piso')
         .eq('plano', data.plano)
-        .single()
+        .limit(1)
 
       const updateData = {
         nombre: data.nombre,
-        id_tipo: tipo?.id_tipo,
-        id_piso: piso?.id_piso
+        id_tipo: tipoResult?.[0]?.id_tipo,
+        id_piso: pisoResult?.[0]?.id_piso
       }
 
-      return super.update(id, updateData, 'id_punto_interior')
+      const { data: result, error } = await supabase
+        .from('punto_interes_interior')
+        .update(updateData)
+        .eq('id_punto_interior', id)
+        .select()
+
+      if (error) throw error
+      return { data: result, error: null }
     } catch (error) {
       console.error('Error actualizando punto interior:', error)
       return { data: null, error }
@@ -100,10 +121,34 @@ export class PuntoInteriorService extends BaseService {
   }
 
   async updateEstado(id, activo) {
-    return super.update(id, { activo }, 'id_punto_interior')
+    try {
+      const { data, error } = await supabase
+        .from('punto_interes_interior')
+        .update({ activo })
+        .eq('id_punto_interior', id)
+        .select()
+
+      if (error) throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('Error actualizando estado punto interior:', error)
+      return { data: null, error }
+    }
   }
 
   async delete(id) {
-    return super.delete(id, 'id_punto_interior')
+    try {
+      const { data, error } = await supabase
+        .from('punto_interes_interior')
+        .delete()
+        .eq('id_punto_interior', id)
+        .select()
+
+      if (error) throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('Error eliminando punto interior:', error)
+      return { data: null, error }
+    }
   }
 }
