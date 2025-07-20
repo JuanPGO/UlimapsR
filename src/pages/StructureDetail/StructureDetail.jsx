@@ -89,11 +89,11 @@ const StructureDetail = () => {
                             {imagenes && imagenes.length > 0 ? (
                                 <Carousel className="carouselContainerImages">
                                     {imagenes.map((imagen) => (
-                                        <CarouselItem key={imagen.id}>
+                                        <CarouselItem key={imagen.id_imagen}>
                                             <img 
                                                 src={`/assets/images/fotos/exterior/${imagen.nombre}.jpg`} 
                                                 className="d-block w-100" 
-                                                alt={`Imagen ${imagen.id}`}
+                                                alt={`Imagen ${imagen.id_imagen}`}
                                                 onError={(e) => {
                                                     console.error(`Error loading image: ${imagen.nombre}`)
                                                     e.target.src = '/assets/images/placeholder.jpg'
@@ -166,15 +166,19 @@ const StructureDetail = () => {
                                     <div className="pagination-container">
                                         <Pagination>
                                             <Pagination.First 
+                                                key="pagination-first"
                                                 onClick={() => paginate(1)} 
                                                 disabled={currentPage === 1} 
                                             />
                                             <Pagination.Prev 
+                                                key="pagination-prev"
                                                 onClick={() => paginate(currentPage - 1)} 
                                                 disabled={currentPage === 1} 
                                             />
 
-                                            {currentPage > 3 && <Pagination.Ellipsis />}
+                                            {currentPage > 3 && (
+                                                <Pagination.Ellipsis key="ellipsis-start" />
+                                            )}
 
                                             {[...Array(totalPages).keys()]
                                                 .slice(Math.max(0, currentPage - 3), Math.min(totalPages, currentPage + 2))
@@ -188,13 +192,17 @@ const StructureDetail = () => {
                                                     </Pagination.Item>
                                                 ))}
 
-                                            {currentPage < totalPages - 2 && <Pagination.Ellipsis />}
+                                            {currentPage < totalPages - 2 && (
+                                                <Pagination.Ellipsis key="ellipsis-end" />
+                                            )}
 
                                             <Pagination.Next 
+                                                key="pagination-next"
                                                 onClick={() => paginate(currentPage + 1)} 
                                                 disabled={currentPage === totalPages} 
                                             />
                                             <Pagination.Last 
+                                                key="pagination-last"
                                                 onClick={() => paginate(totalPages)} 
                                                 disabled={currentPage === totalPages} 
                                             />
@@ -211,11 +219,11 @@ const StructureDetail = () => {
                             {imagenes && imagenes.length > 0 ? (
                                 <Carousel className="carouselContainerImages">
                                     {imagenes.map((imagen) => (
-                                        <CarouselItem key={imagen.id}>
+                                        <CarouselItem key={imagen.id_imagen}>
                                             <img 
                                                 src={`/assets/images/fotos/exterior/${imagen.nombre}.jpg`} 
                                                 className="d-block w-100" 
-                                                alt={`Imagen ${imagen.id}`}
+                                                alt={`Imagen ${imagen.id_imagen}`}
                                                 onError={(e) => {
                                                     console.error(`Error loading image: ${imagen.nombre}`)
                                                     e.target.src = '/assets/images/placeholder.jpg'
