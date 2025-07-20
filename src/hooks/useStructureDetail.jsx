@@ -51,8 +51,19 @@ export const useStructureDetail = () => {
 
       setData(result)
     } catch (error) {
-      console.error('Error cargando datos:', error)
-      setError(error.message || 'Error al cargar los datos')
+      console.error('Error cargando datos completos:', error)
+      return {
+        puntoExterior: null,
+        imagenes: [],
+        estructura: null,
+        pisos: [],
+        puntosInteriores: [],
+        parqueadero: null,
+        esEstructura: false,
+        esParqueadero: false,
+        soloMostrarFotos: false,
+        error
+      }
     } finally {
       setLoading(false)
     }
@@ -85,6 +96,7 @@ export const useStructureDetail = () => {
     estructura: data.estructura,
     pisos: data.pisos,
     puntosInteriores: data.puntosInteriores,
+    soloMostrarFotos: data.soloMostrarFotos,
     
     // Estado
     loading,

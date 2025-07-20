@@ -154,14 +154,14 @@ export class StructureDetailService {
     }
   }
 
-  // Determinar el tipo de punto (estructura o parqueadero)
+  // Determinar el tipo de punto y si debe mostrar solo fotos
   static async determinarTipoPunto(idPuntoExterior) {
     try {
       const { data: puntosConInfo, error } = await supabase
         .from('punto_interes_exterior')
         .select(`
           id_punto_exterior,
-          estructura(id_estructura, bloque),
+          estructura(id_estructura, bloque, tipo(id_tipo, nombre_tipo)),
           parqueadero(id_parqueadero, vehiculo)
         `)
         .eq('id_punto_exterior', idPuntoExterior)
@@ -172,12 +172,26 @@ export class StructureDetailService {
       const tieneEstructura = puntosConInfo.estructura && puntosConInfo.estructura.length > 0
       const tieneParqueadero = puntosConInfo.parqueadero && puntosConInfo.parqueadero.length > 0
 
+      // Tipos que solo deben mostrar fotos (no planos ni puntos de interés)
+      const tiposSoloFotos = [5, 14] // 5: Escenario Deportivo, 14: Zona de ingreso
+      
+      let soloMostrarFotos = false
+      let tipoEstructura = null
+
+      if (tieneEstructura) {
+        const estructura = puntosConInfo.estructura[0]
+        tipoEstructura = estructura.tipo
+        soloMostrarFotos = tiposSoloFotos.includes(estructura.tipo?.id_tipo)
+      }
+
       return {
         data: {
           esEstructura: tieneEstructura,
           esParqueadero: tieneParqueadero,
+          soloMostrarFotos: soloMostrarFotos || tieneParqueadero, // Parqueaderos también solo muestran fotos
           estructura: tieneEstructura ? puntosConInfo.estructura[0] : null,
-          parqueadero: tieneParqueadero ? puntosConInfo.parqueadero[0] : null
+          parqueadero: tieneParqueadero ? puntosConInfo.parqueadero[0] : null,
+          tipoEstructura
         },
         error: null
       }
@@ -197,7 +211,7 @@ export class StructureDetailService {
         throw new Error('No se pudo determinar el tipo de punto')
       }
 
-      const { esEstructura, esParqueadero } = tipoResult.data
+      const { esEstructura, esParqueadero, soloMostrarFotos } = tipoResult.data
 
       // Cargar datos básicos que siempre necesitamos
       const [puntoResult, imagenesResult] = await Promise.all([
@@ -211,16 +225,19 @@ export class StructureDetailService {
       let parqueadero = null
 
       if (esEstructura) {
-        // Si es estructura, cargar datos de estructura
-        const [estructuraResult, pisosResult, puntosInterioresResult] = await Promise.all([
-          this.getEstructuraByPunto(idPuntoExterior),
-          this.getPisosByPunto(idPuntoExterior),
-          this.getPuntosInterioresByPunto(idPuntoExterior)
-        ])
-
+        // Si es estructura, cargar datos básicos de estructura
+        const estructuraResult = await this.getEstructuraByPunto(idPuntoExterior)
         estructura = estructuraResult.data
-        pisos = pisosResult.data || []
-        puntosInteriores = puntosInterioresResult.data || []
+
+        // Solo cargar pisos y puntos interiores si no es un tipo que solo muestra fotos
+        if (!soloMostrarFotos) {
+          const [pisosResult, puntosInterioresResult] = await Promise.all([
+            this.getPisosByPunto(idPuntoExterior),
+            this.getPuntosInterioresByPunto(idPuntoExterior)
+          ])
+          pisos = pisosResult.data || []
+          puntosInteriores = puntosInterioresResult.data || []
+        }
       } else if (esParqueadero) {
         // Si es parqueadero, cargar datos de parqueadero
         const parqueaderoResult = await this.getParqueaderoByPunto(idPuntoExterior)
@@ -236,6 +253,7 @@ export class StructureDetailService {
         parqueadero,
         esEstructura,
         esParqueadero,
+        soloMostrarFotos,
         error: null
       }
     } catch (error) {
@@ -249,6 +267,7 @@ export class StructureDetailService {
         parqueadero: null,
         esEstructura: false,
         esParqueadero: false,
+        soloMostrarFotos: false,
         error
       }
     }

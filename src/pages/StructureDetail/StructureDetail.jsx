@@ -12,6 +12,7 @@ const StructureDetail = () => {
         estructura,
         pisos,
         puntosInteriores,
+        soloMostrarFotos,
         loading,
         error,
         currentPage,
@@ -81,8 +82,35 @@ const StructureDetail = () => {
 
             {/* Content */}
             <div className="contenedor-interior6">
-                {estructura ? (
-                    // Si tiene estructura, mostrar todas las tabs
+                {soloMostrarFotos ? (
+                    // Si solo debe mostrar fotos (parqueaderos, canchas, entradas)
+                    <Tabs defaultActiveKey="fotos" id="simple-tabs" className="mb-3 tabs" fill>
+                        <Tab eventKey="fotos" title="Fotos">
+                            {imagenes && imagenes.length > 0 ? (
+                                <Carousel className="carouselContainerImages">
+                                    {imagenes.map((imagen) => (
+                                        <CarouselItem key={imagen.id_imagen}>
+                                            <img 
+                                                src={`/assets/images/fotos/exterior/${imagen.nombre}.jpg`} 
+                                                className="d-block w-100" 
+                                                alt={`Imagen ${imagen.id_imagen}`}
+                                                onError={(e) => {
+                                                    console.error(`Error loading image: ${imagen.nombre}`)
+                                                    e.target.src = '/assets/images/placeholder.jpg'
+                                                }}
+                                            />
+                                        </CarouselItem>
+                                    ))}
+                                </Carousel>
+                            ) : (
+                                <div className="no-images-placeholder">
+                                    <span>No hay imágenes disponibles</span>
+                                </div>
+                            )}
+                        </Tab>
+                    </Tabs>
+                ) : (
+                    // Si es estructura completa, mostrar todas las tabs
                     <Tabs defaultActiveKey="fotos" id="structure-tabs" className="mb-3 tabs" fill>
                         {/* Tab de Fotos */}
                         <Tab eventKey="fotos" title="Fotos">
@@ -160,83 +188,45 @@ const StructureDetail = () => {
                                         </tbody>
                                     </Table>
                                 </div>
-
+                                
                                 {/* Paginación */}
-                                {puntosInteriores.length > 0 && totalPages > 1 && (
+                                {totalPages > 1 && (
                                     <div className="pagination-container">
                                         <Pagination>
                                             <Pagination.First 
-                                                key="pagination-first"
-                                                onClick={() => paginate(1)} 
-                                                disabled={currentPage === 1} 
+                                                onClick={() => paginate(1)}
+                                                disabled={currentPage === 1}
                                             />
                                             <Pagination.Prev 
-                                                key="pagination-prev"
-                                                onClick={() => paginate(currentPage - 1)} 
-                                                disabled={currentPage === 1} 
+                                                onClick={() => paginate(currentPage - 1)}
+                                                disabled={currentPage === 1}
                                             />
-
-                                            {currentPage > 3 && (
-                                                <Pagination.Ellipsis key="ellipsis-start" />
-                                            )}
-
-                                            {[...Array(totalPages).keys()]
-                                                .slice(Math.max(0, currentPage - 3), Math.min(totalPages, currentPage + 2))
-                                                .map((number) => (
+                                            
+                                            {[...Array(totalPages)].map((_, index) => {
+                                                const pageNumber = index + 1
+                                                return (
                                                     <Pagination.Item
-                                                        key={number + 1}
-                                                        active={number + 1 === currentPage}
-                                                        onClick={() => paginate(number + 1)}
+                                                        key={pageNumber}
+                                                        active={pageNumber === currentPage}
+                                                        onClick={() => paginate(pageNumber)}
                                                     >
-                                                        {number + 1}
+                                                        {pageNumber}
                                                     </Pagination.Item>
-                                                ))}
-
-                                            {currentPage < totalPages - 2 && (
-                                                <Pagination.Ellipsis key="ellipsis-end" />
-                                            )}
-
+                                                )
+                                            })}
+                                            
                                             <Pagination.Next 
-                                                key="pagination-next"
-                                                onClick={() => paginate(currentPage + 1)} 
-                                                disabled={currentPage === totalPages} 
+                                                onClick={() => paginate(currentPage + 1)}
+                                                disabled={currentPage === totalPages}
                                             />
                                             <Pagination.Last 
-                                                key="pagination-last"
-                                                onClick={() => paginate(totalPages)} 
-                                                disabled={currentPage === totalPages} 
+                                                onClick={() => paginate(totalPages)}
+                                                disabled={currentPage === totalPages}
                                             />
                                         </Pagination>
                                     </div>
                                 )}
                             </div>
-                        </Tab>
-                    </Tabs>
-                ) : (
-                    // Si no tiene estructura, mostrar solo fotos
-                    <Tabs defaultActiveKey="fotos" id="simple-tabs" className="mb-3 tabs" fill>
-                        <Tab eventKey="fotos" title="Fotos">
-                            {imagenes && imagenes.length > 0 ? (
-                                <Carousel className="carouselContainerImages">
-                                    {imagenes.map((imagen) => (
-                                        <CarouselItem key={imagen.id_imagen}>
-                                            <img 
-                                                src={`/assets/images/fotos/exterior/${imagen.nombre}.jpg`} 
-                                                className="d-block w-100" 
-                                                alt={`Imagen ${imagen.id_imagen}`}
-                                                onError={(e) => {
-                                                    console.error(`Error loading image: ${imagen.nombre}`)
-                                                    e.target.src = '/assets/images/placeholder.jpg'
-                                                }}
-                                            />
-                                        </CarouselItem>
-                                    ))}
-                                </Carousel>
-                            ) : (
-                                <div className="no-images-placeholder">
-                                    <span>No hay imágenes disponibles</span>
-                                </div>
-                            )}
                         </Tab>
                     </Tabs>
                 )}
