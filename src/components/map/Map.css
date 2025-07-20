@@ -1,0 +1,315 @@
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;500;700&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.contenedor-bienvenidamap {
+    background: #690410;
+    box-shadow: 0 0 20px black;
+    width: 90vw;
+    height: 90vh;
+    display: grid;
+    grid-template-rows: 50px 1fr 50px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.navegacionDiv {
+    background-color: #690410;
+    width: 100%;
+    height: 50px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mapa {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: white;
+}
+
+.mapa-container {
+    width: 100%;
+    height: 100%;
+}
+
+.navegacionDiv2 {
+    background-color: #690410;
+    width: 100%;
+    height: 50px;
+    border-radius: 0 0 15px 15px;
+    position: relative;
+}
+
+/* Loading */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: white;
+    font-family: "Kaisei Decol", serif;
+}
+
+.loading-container p {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+}
+
+/* Botón de regreso centrado */
+.boton-regreso {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.boton-regreso a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+}
+
+/* Leaflet Container */
+.leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Estilos del Popup */
+.leaflet-popup-content {
+    margin: 0 !important;
+    width: 300px !important;
+}
+
+.leaflet-popup-content-wrapper {
+    padding: 0 !important;
+    border-radius: 8px !important;
+}
+
+.leaflet-popup-close-button {
+    display: flex !important;
+    padding-top: 5px;
+    height: 22% !important;
+    color: white !important;
+}
+
+.leaflet-top {
+    z-index: 1001 !important;
+}
+
+.leaflet-top.leaflet-left {
+    margin-top: 10px !important;
+}
+
+/* Contenedor del Popup */
+.contenedorPop {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.headerPop {
+    background: linear-gradient(90deg, #690410, #c9081f);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-family: "Kaisei Decol", serif;
+}
+
+.bodyPop {
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+.imagePop {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.imagePop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-style: italic;
+}
+
+.infoPop {
+    padding: 15px;
+}
+
+.nomPop {
+    margin-bottom: 10px;
+}
+
+.bloquePop {
+    font-weight: bold;
+    color: #690410;
+    font-size: 1.1rem;
+}
+
+.buttonPop {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.buttonPop button {
+    background: linear-gradient(90deg, #690410, #c9081f);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+    font-family: "Kaisei Decol", serif;
+}
+
+.buttonPop button:hover {
+    background: linear-gradient(90deg, #c9081f, #690410);
+    transform: translateY(-1px);
+}
+
+.route-button {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8) !important;
+}
+
+.route-button:hover {
+    background: linear-gradient(90deg, #1d4ed8, #2563eb) !important;
+}
+
+.boton-out {
+    text-decoration: none;
+}
+
+.no-underline {
+    text-decoration: none !important;
+}
+
+/* User Location Marker */
+.user-location-marker {
+    background: none !important;
+    border: none !important;
+}
+
+/* Toast Container */
+.map-toast-container {
+    bottom: 60px !important;
+}
+
+.map-toast {
+    font-family: "Kaisei Decol", serif;
+}
+
+/* Controles del mapa */
+.leaflet-control-container .leaflet-control {
+    margin-bottom: 10px;
+}
+
+.leaflet-control button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.leaflet-control button:hover {
+    background-color: #f8f9fa !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contenedor-bienvenidamap {
+        width: 95vw;
+        height: 95vh;
+    }
+    
+    .leaflet-popup-content {
+        width: 280px !important;
+    }
+    
+    .buttonPop {
+        flex-direction: column;
+    }
+    
+    .buttonPop button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .leaflet-popup-content {
+        width: 250px !important;
+    }
+    
+    .imagePop {
+        height: 120px;
+    }
+    
+    .infoPop {
+        padding: 10px;
+    }
+    
+    .headerPop {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.contenedorPop {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Spinner personalizado */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.text-primary {
+    color: #c9081f !important;
+}
