@@ -1,4 +1,5 @@
 import { BaseService } from './baseService.js'
+import { supabase } from '../supabase/client.js'
 
 export class ParqueaderoService extends BaseService {
   constructor() {
@@ -7,7 +8,7 @@ export class ParqueaderoService extends BaseService {
 
   async getAll() {
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('parqueadero')
         .select(`
           id_parqueadero,
@@ -15,15 +16,15 @@ export class ParqueaderoService extends BaseService {
           vehiculo,
           tipo(nombre_tipo)
         `)
-        .order('id_parqueadero')
+        .order('id_parqueadero', { ascending: true })
 
       if (error) throw error
       
       const formattedData = data?.map(item => ({
-        id: item.id,
+        id: item.id_parqueadero,
         nombre: item.punto_interes_exterior?.nombre,
         vehiculo: item.vehiculo,
-        nombreTipo: item.tipo?.nombre_tipo
+        nombre_tipo: item.tipo?.nombre_tipo
       }))
 
       return { data: formattedData, error: null }
@@ -35,16 +36,16 @@ export class ParqueaderoService extends BaseService {
 
   async create(data) {
     // Buscar IDs necesarios
-    const { data: puntoExt } = await this.supabase
+    const { data: puntoExt } = await supabase
       .from('punto_interes_exterior')
       .select('id_punto_exterior')
       .eq('nombre', data.nombre)
       .single()
 
-    const { data: tipo } = await this.supabase
+    const { data: tipo } = await supabase
       .from('tipo')
       .select('id_tipo')
-      .eq('nombre_tipo', data.nombreTipo)
+      .eq('nombre_tipo', data.nombre_tipo)
       .single()
 
     if (!puntoExt || !tipo) {
@@ -63,16 +64,16 @@ export class ParqueaderoService extends BaseService {
 
   async update(id, data) {
     // Similar lógica para update
-    const { data: puntoExt } = await this.supabase
+    const { data: puntoExt } = await supabase
       .from('punto_interes_exterior')
       .select('id_punto_exterior')
       .eq('nombre', data.nombre)
       .single()
 
-    const { data: tipo } = await this.supabase
+    const { data: tipo } = await supabase
       .from('tipo')
       .select('id_tipo')
-      .eq('nombre_tipo', data.nombreTipo)
+      .eq('nombre_tipo', data.nombre_tipo)
       .single()
 
     const updateData = {

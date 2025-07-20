@@ -22,10 +22,10 @@ export class PuntoInteriorService extends BaseService {
       if (error) throw error
       
       const formattedData = data?.map(item => ({
-        id: item.id,
+        id: item.id_punto_interior,
         nombre: item.nombre,
         activo: item.activo,
-        nombreTipo: item.tipo?.nombre_tipo,
+        nombre_tipo: item.tipo?.nombre_tipo,
         estructura: item.piso?.estructura?.bloque,
         plano: item.piso?.plano
       }))
@@ -43,7 +43,7 @@ export class PuntoInteriorService extends BaseService {
       const { data: tipo } = await supabase
         .from('tipo')
         .select('id_tipo')
-        .eq('nombre_tipo', data.nombreTipo)
+        .eq('nombre_tipo', data.nombre_tipo)
         .single()
 
       // Buscar ID de piso
@@ -77,7 +77,7 @@ export class PuntoInteriorService extends BaseService {
       const { data: tipo } = await supabase
         .from('tipo')
         .select('id_tipo')
-        .eq('nombre_tipo', data.nombreTipo)
+        .eq('nombre_tipo', data.nombre_tipo)
         .single()
 
       const { data: piso } = await supabase

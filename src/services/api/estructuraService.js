@@ -1,4 +1,5 @@
 import { BaseService } from './baseService.js'
+import { supabase } from '../supabase/client.js'
 
 export class EstructuraService extends BaseService {
   constructor() {
@@ -6,17 +7,37 @@ export class EstructuraService extends BaseService {
   }
 
   async getAll() {
-    return super.getAll(`
-      e.id_estructura,
-      e.bloque,
-      pe.nombre,
-      t.nombre_tipo as "nombreTipo"
-    `, 'e.bloque')
+    try {
+      const { data, error } = await supabase
+        .from('estructura')
+        .select(`
+          id_estructura,
+          bloque,
+          punto_interes_exterior(nombre),
+          tipo(nombre_tipo)
+        `)
+        .order('id_estructura', { ascending: true })
+
+      if (error) throw error
+      
+      // Formatear datos para compatibilidad
+      const formattedData = data?.map(item => ({
+        id: item.id_estructura,
+        bloque: item.bloque,
+        nombre: item.punto_interes_exterior?.nombre,
+        nombre_tipo: item.tipo?.nombre_tipo
+      }))
+
+      return { data: formattedData, error: null }
+    } catch (error) {
+      console.error('Error obteniendo estructuras:', error)
+      return { data: null, error }
+    }
   }
 
   async getAllWithJoins() {
     try {
-      const { data, error } = await this.supabase
+      const { data, error } = await supabase
         .from('estructura')
         .select(`
           id_estructura,
@@ -45,17 +66,17 @@ export class EstructuraService extends BaseService {
 
   async create(data) {
     // Buscar ID de punto exterior por nombre
-    const { data: puntoExt } = await this.supabase
+    const { data: puntoExt } = await supabase
       .from('punto_interes_exterior')
       .select('id_punto_exterior')
       .eq('nombre', data.nombre)
       .single()
 
     // Buscar ID de tipo por nombre
-    const { data: tipo } = await this.supabase
+    const { data: tipo } = await supabase
       .from('tipo')
       .select('id_tipo')
-      .eq('nombre_tipo', data.nombreTipo)
+      .eq('nombre_tipo', data.nombre_tipo)
       .single()
 
     if (!puntoExt || !tipo) {
@@ -74,16 +95,16 @@ export class EstructuraService extends BaseService {
 
   async update(id, data) {
     // Similar lógica de búsqueda para update
-    const { data: puntoExt } = await this.supabase
+    const { data: puntoExt } = await supabase
       .from('punto_interes_exterior')
       .select('id_punto_exterior')
       .eq('nombre', data.nombre)
       .single()
 
-    const { data: tipo } = await this.supabase
+    const { data: tipo } = await supabase
       .from('tipo')
       .select('id_tipo')
-      .eq('nombre_tipo', data.nombreTipo)
+      .eq('nombre_tipo', data.nombre_tipo)
       .single()
 
     const updateData = {

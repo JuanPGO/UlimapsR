@@ -5,24 +5,6 @@ export class BaseService {
     this.tableName = tableName
   }
 
-  async getAll(select = '*', orderBy = null) {
-    try {
-      let query = supabase.from(this.tableName).select(select)
-      
-      if (orderBy) {
-        query = query.order(orderBy)
-      }
-      
-      const { data, error } = await query
-      if (error) throw error
-      
-      return { data, error: null }
-    } catch (error) {
-      console.error(`Error obteniendo datos de ${this.tableName}:`, error)
-      return { data: null, error }
-    }
-  }
-
   async getById(id, idField = 'id') {
     try {
       const { data, error } = await supabase

@@ -78,11 +78,21 @@ export const useCRUD = () => {
         AuxiliarService.getPisosSelect()
       ])
 
-      setTiposOptions(tiposResult.data || [])
+      // Mapear correctamente los nombres de campo
+      setTiposOptions(tiposResult.data?.map(item => ({ 
+        id_tipo: item.id_tipo, 
+        nombre_tipo: item.nombre_tipo 
+      })) || [])
       setTiposVOptions(vehiculosResult.data || [])
-      setPuntoExtOptions(puntosExtResult.data || [])
+      setPuntoExtOptions(puntosExtResult.data?.map(item => ({ 
+        id_punto_exterior: item.id_punto_exterior, 
+        nombre: item.nombre 
+      })) || [])
       setEstructuraOptions(estructurasResult.data || [])
-      setPisoOptions(pisosResult.data || [])
+      setPisoOptions(pisosResult.data?.map(item => ({ 
+        id_piso: item.id_piso, 
+        plano: item.plano 
+      })) || [])
     } catch (error) {
       console.error('Error cargando opciones:', error)
     }

@@ -1,4 +1,5 @@
 import { BaseService } from './baseService.js'
+import { supabase } from '../supabase/client.js'
 
 export class PuntoExteriorService extends BaseService {
   constructor() {
@@ -6,10 +7,28 @@ export class PuntoExteriorService extends BaseService {
   }
 
   async getAll() {
-    return super.getAll(
-      'id_punto_exterior, nombre, latitud, longitud, activo',
-      'nombre'
-    )
+    try {
+      const { data, error } = await supabase
+        .from('punto_interes_exterior')
+        .select('id_punto_exterior, nombre, latitud, longitud, activo')
+        .order('id_punto_exterior')
+
+      if (error) throw error
+      
+      // Mapear datos para consistencia con el frontend
+      const formattedData = data?.map(item => ({
+        id: item.id_punto_exterior, // Mapear a 'id' para consistencia
+        nombre: item.nombre,
+        latitud: item.latitud,
+        longitud: item.longitud,
+        activo: item.activo
+      }))
+
+      return { data: formattedData, error: null }
+    } catch (error) {
+      console.error('Error obteniendo puntos exteriores:', error)
+      return { data: null, error }
+    }
   }
 
   async create(data) {

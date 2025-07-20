@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './CRUD.css';
 import { useNavigate } from 'react-router-dom';
 import { Nav, NavDropdown, Table, Pagination, Modal, Form, Button } from 'react-bootstrap';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightFromBracket, faBars, faKey, faMapLocationDot, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -68,13 +68,13 @@ const CRUD = () => {
             { name: 'ID', type: 'number', key: 'id'},
             { name: 'Bloque', type: 'text', key: 'bloque' },
             { name: 'Punto Exterior', type: 'select', key: 'nombre', options: puntoExtOptions.map(pe => ({ value: pe.nombre, label: pe.nombre }))},
-            { name: 'Tipo', type: 'select', key: 'nombreTipo', options: tiposOptions.map(t => ({ value: t.nombreTipo, label: t.nombreTipo })) }
+            { name: 'Tipo', type: 'select', key: 'nombre_tipo', options: tiposOptions.map(t => ({ value: t.nombre_tipo, label: t.nombre_tipo })) }
         ],
         '1.3': [
             { name: 'ID', type: 'number', key: 'id'},
             { name: 'Punto Exterior', type: 'select', key: 'nombre', options: puntoExtOptions.map(pe => ({ value: pe.nombre, label: pe.nombre }))},
             { name: 'Vehiculo', type: 'select', key: 'vehiculo', options: tiposVOptions.map(t => ({ value: t.vehiculo, label: t.vehiculo })) },
-            { name: 'Tipo', type: 'select', key: 'nombreTipo', options: tiposOptions.map(t => ({ value: t.nombreTipo, label: t.nombreTipo })) }
+            { name: 'Tipo', type: 'select', key: 'nombre_tipo', options: tiposOptions.map(t => ({ value: t.nombre_tipo, label: t.nombre_tipo })) }
         ],
         '1.4': [
             { name: 'ID', type: 'number', key: 'id'},
@@ -89,7 +89,7 @@ const CRUD = () => {
                 { value: true, label: 'Activo' },
                 { value: false, label: 'Inactivo' }
             ]},
-            { name: 'Tipo', type: 'select', key: 'nombreTipo', options: tiposOptions.map(t => ({ value: t.nombreTipo, label: t.nombreTipo })) },
+            { name: 'Tipo', type: 'select', key: 'nombre_tipo', options: tiposOptions.map(t => ({ value: t.nombre_tipo, label: t.nombre_tipo })) },
             { name: 'Plano', type: 'select', key: 'plano', options: pisoOptions.map(pi => ({ value: pi.plano, label: pi.plano }))}
         ],
         '1.6': [
@@ -192,8 +192,16 @@ const CRUD = () => {
     };
 
     const handleChangeEstado = async (item) => {
-        const nuevoEstado = item.activo === 1 ? 0 : 1;
-        await cambiarEstado(item.id, nuevoEstado);
+        // Verificar que el item tenga un ID válido
+        const itemId = item.id || item.id_punto_exterior || item.id_punto_interior;
+        
+        if (!itemId) {
+            toast.error('Error: ID del elemento no encontrado');    
+            return;
+        }
+        
+        const nuevoEstado = item.activo === true ? false : true;
+        await cambiarEstado(itemId, nuevoEstado);
     };
 
     const renderFormField = (field, isEdit = false) => {

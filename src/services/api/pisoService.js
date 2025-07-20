@@ -21,7 +21,7 @@ export class PisoService extends BaseService {
       if (error) throw error
       
       const formattedData = data?.map(item => ({
-        id: item.id,
+        id: item.id_piso,
         nivel: item.nivel,
         bloque: item.estructura?.bloque,
         nombre: item.estructura?.punto_interes_exterior?.nombre,
