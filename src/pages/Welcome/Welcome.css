@@ -7,6 +7,7 @@ body {
     justify-content: center;
     justify-items: center;
     height: 100vh;
+    background: radial-gradient(#E2001A,#580101);
 }
 
 .contenedor-bienvenida {
@@ -191,3 +192,4 @@ body {
         flex-direction: column;
     }
 }
+    
