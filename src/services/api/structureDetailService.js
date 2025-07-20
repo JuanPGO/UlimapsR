@@ -133,29 +133,109 @@ export class StructureDetailService {
     }
   }
 
-  // Cargar todos los datos de una estructura de una vez
+  // Obtener parqueadero por punto exterior
+  static async getParqueaderoByPunto(idPuntoExterior) {
+    try {
+      const { data, error } = await supabase
+        .from('parqueadero')
+        .select(`
+          id_parqueadero,
+          vehiculo,
+          tipo(nombre_tipo)
+        `)
+        .eq('id_punto_exterior', idPuntoExterior)
+        .single()
+
+      if (error && error.code !== 'PGRST116') throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('Error obteniendo parqueadero:', error)
+      return { data: null, error }
+    }
+  }
+
+  // Determinar el tipo de punto (estructura o parqueadero)
+  static async determinarTipoPunto(idPuntoExterior) {
+    try {
+      const { data: puntosConInfo, error } = await supabase
+        .from('punto_interes_exterior')
+        .select(`
+          id_punto_exterior,
+          estructura(id_estructura, bloque),
+          parqueadero(id_parqueadero, vehiculo)
+        `)
+        .eq('id_punto_exterior', idPuntoExterior)
+        .single()
+
+      if (error) throw error
+
+      const tieneEstructura = puntosConInfo.estructura && puntosConInfo.estructura.length > 0
+      const tieneParqueadero = puntosConInfo.parqueadero && puntosConInfo.parqueadero.length > 0
+
+      return {
+        data: {
+          esEstructura: tieneEstructura,
+          esParqueadero: tieneParqueadero,
+          estructura: tieneEstructura ? puntosConInfo.estructura[0] : null,
+          parqueadero: tieneParqueadero ? puntosConInfo.parqueadero[0] : null
+        },
+        error: null
+      }
+    } catch (error) {
+      console.error('Error determinando tipo de punto:', error)
+      return { data: null, error }
+    }
+  }
+
+  // Cargar todos los datos de una estructura o parqueadero de una vez
   static async cargarDatosCompletos(idPuntoExterior) {
     try {
-      const [
-        puntoResult,
-        imagenesResult,
-        estructuraResult,
-        pisosResult,
-        puntosInterioresResult
-      ] = await Promise.all([
+      // Primero determinar si es estructura o parqueadero
+      const tipoResult = await this.determinarTipoPunto(idPuntoExterior)
+      
+      if (tipoResult.error || !tipoResult.data) {
+        throw new Error('No se pudo determinar el tipo de punto')
+      }
+
+      const { esEstructura, esParqueadero } = tipoResult.data
+
+      // Cargar datos básicos que siempre necesitamos
+      const [puntoResult, imagenesResult] = await Promise.all([
         this.getPuntoExteriorById(idPuntoExterior),
-        this.getAllImagenesByPunto(idPuntoExterior),
-        this.getEstructuraByPunto(idPuntoExterior),
-        this.getPisosByPunto(idPuntoExterior),
-        this.getPuntosInterioresByPunto(idPuntoExterior)
+        this.getAllImagenesByPunto(idPuntoExterior)
       ])
+
+      let estructura = null
+      let pisos = []
+      let puntosInteriores = []
+      let parqueadero = null
+
+      if (esEstructura) {
+        // Si es estructura, cargar datos de estructura
+        const [estructuraResult, pisosResult, puntosInterioresResult] = await Promise.all([
+          this.getEstructuraByPunto(idPuntoExterior),
+          this.getPisosByPunto(idPuntoExterior),
+          this.getPuntosInterioresByPunto(idPuntoExterior)
+        ])
+
+        estructura = estructuraResult.data
+        pisos = pisosResult.data || []
+        puntosInteriores = puntosInterioresResult.data || []
+      } else if (esParqueadero) {
+        // Si es parqueadero, cargar datos de parqueadero
+        const parqueaderoResult = await this.getParqueaderoByPunto(idPuntoExterior)
+        parqueadero = parqueaderoResult.data
+      }
 
       return {
         puntoExterior: puntoResult.data,
         imagenes: imagenesResult.data || [],
-        estructura: estructuraResult.data,
-        pisos: pisosResult.data || [],
-        puntosInteriores: puntosInterioresResult.data || [],
+        estructura,
+        pisos,
+        puntosInteriores,
+        parqueadero,
+        esEstructura,
+        esParqueadero,
         error: null
       }
     } catch (error) {
@@ -166,6 +246,9 @@ export class StructureDetailService {
         estructura: null,
         pisos: [],
         puntosInteriores: [],
+        parqueadero: null,
+        esEstructura: false,
+        esParqueadero: false,
         error
       }
     }
