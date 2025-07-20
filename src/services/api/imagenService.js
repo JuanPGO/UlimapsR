@@ -16,9 +16,9 @@ export class ImagenService {
       if (error) throw error
       
       const formattedData = data?.map(item => ({
-        id: item.id,
+        id: item.id_imagen,
         nombre: item.nombre,
-        punto_exterior: item.punto_interes_exterior?.nombre
+        puntoExterior: item.punto_interes_exterior?.nombre
       }))
 
       return { data: formattedData, error: null }

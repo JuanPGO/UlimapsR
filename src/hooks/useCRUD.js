@@ -27,7 +27,8 @@ const tipos = {
 }
 
 export const useCRUD = () => {
-  const [datos, setDatos] = useState([])
+  // Cache de datos por tipo de tabla
+  const [datosCache, setDatosCache] = useState({})
   const [loading, setLoading] = useState(false)
   const [tipoSeleccionado, setTipoSeleccionado] = useState('1.1')
   const [tituloSeleccionado, setTituloSeleccionado] = useState('Puntos Interes Exterior')
@@ -39,23 +40,28 @@ export const useCRUD = () => {
   const [pisoOptions, setPisoOptions] = useState([])
   const [tiposVOptions, setTiposVOptions] = useState([])
 
-  const cargarDatos = async () => {
+  // Obtener datos del cache actual
+  const datos = datosCache[tipoSeleccionado] || []
+
+  const cargarDatos = async (tipo = tipoSeleccionado) => {
     setLoading(true)
     try {
-      const service = services[tipoSeleccionado]
+      const service = services[tipo]
       const { data, error } = await service.getAll()
       
       if (error) {
         toast.error('Error al cargar datos')
-        setDatos([])
         return
       }
       
-      setDatos(data || [])
+      // Actualizar solo el cache del tipo específico
+      setDatosCache(prevCache => ({
+        ...prevCache,
+        [tipo]: data || []
+      }))
     } catch (error) {
       console.error('Error cargando datos:', error)
       toast.error('Error al cargar datos')
-      setDatos([])
     } finally {
       setLoading(false)
     }
@@ -110,7 +116,14 @@ export const useCRUD = () => {
       }
       
       toast.success('Elemento creado exitosamente')
-      await cargarDatos()
+      
+      // MEJORAR: Invalidar cache y recargar para asegurar datos frescos
+      setDatosCache(prevCache => ({
+        ...prevCache,
+        [tipoSeleccionado]: [] // Limpiar cache actual
+      }))
+      await cargarDatos() // Recargar datos frescos
+      
       return { success: true }
     } catch (error) {
       console.error('Error creando elemento:', error)
@@ -133,7 +146,14 @@ export const useCRUD = () => {
       }
       
       toast.success('Elemento actualizado exitosamente')
+      
+      // Invalidar cache y recargar
+      setDatosCache(prevCache => ({
+        ...prevCache,
+        [tipoSeleccionado]: []
+      }))
       await cargarDatos()
+      
       return { success: true }
     } catch (error) {
       console.error('Error actualizando elemento:', error)
@@ -156,7 +176,14 @@ export const useCRUD = () => {
       }
       
       toast.success('Elemento eliminado exitosamente')
+      
+      // Invalidar cache y recargar
+      setDatosCache(prevCache => ({
+        ...prevCache,
+        [tipoSeleccionado]: []
+      }))
       await cargarDatos()
+      
       return { success: true }
     } catch (error) {
       console.error('Error eliminando elemento:', error)
@@ -184,7 +211,7 @@ export const useCRUD = () => {
       }
       
       toast.success(`Estado cambiado a ${nuevoEstado ? 'Activo' : 'Inactivo'}`)
-      await cargarDatos()
+      await cargarDatos() // Solo recarga la tabla actual
       return { success: true }
     } catch (error) {
       console.error('Error cambiando estado:', error)
@@ -198,8 +225,14 @@ export const useCRUD = () => {
   const handleSelectChange = (eventKey) => {
     setTipoSeleccionado(eventKey)
     setTituloSeleccionado(tipos[eventKey].titulo)
+    
+    // ELIMINAR esta lógica duplicada - el useEffect se encargará
+    // if (!datosCache[eventKey]) {
+    //   cargarDatos(eventKey)
+    // }
   }
 
+  // MANTENER solo este useEffect que maneja la carga
   useEffect(() => {
     cargarDatos()
   }, [tipoSeleccionado])

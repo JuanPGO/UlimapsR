@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './CRUD.css';
 import { useNavigate } from 'react-router-dom';
 import { Nav, NavDropdown, Table, Pagination, Modal, Form, Button } from 'react-bootstrap';
@@ -28,6 +28,16 @@ const CRUD = () => {
         cambiarEstado,
         handleSelectChange
     } = useCRUD();
+
+    // Debug: agregar useEffect para monitorear cambios
+    useEffect(() => {
+        console.log('CRUD - Estado actual:', {
+            tipoSeleccionado,
+            tituloSeleccionado,
+            datosLength: datos.length,
+            loading
+        });
+    }, [tipoSeleccionado, tituloSeleccionado, datos, loading]);
 
     // Estados locales para UI
     const [currentPage, setCurrentPage] = useState(1);
@@ -104,6 +114,11 @@ const CRUD = () => {
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = datos.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(datos.length / itemsPerPage);
+
+    // NUEVO: Resetear paginación cuando cambia el tipo de tabla
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [tipoSeleccionado]);
 
     // Manejadores
     const handleLogout = async () => {
@@ -313,6 +328,10 @@ const CRUD = () => {
                         <div className="spinner-border" role="status">
                             <span className="visually-hidden">Cargando...</span>
                         </div>
+                    </div>
+                ) : datos.length === 0 ? (
+                    <div className="text-center">
+                        <p>No hay datos disponibles para {tituloSeleccionado}</p>
                     </div>
                 ) : (
                     <>
