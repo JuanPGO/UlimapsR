@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { Carousel, CarouselItem, Tabs, Tab, Table, Pagination } from 'react-bootstrap'
-import { useStructureDetail } from '../../hooks/useStructureDetail.js'
+import { useStructureDetail } from '@/hooks/useStructureDetail.jsx'
 import './StructureDetail.css'
 
 const StructureDetail = () => {

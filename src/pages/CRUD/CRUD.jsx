@@ -22,7 +22,6 @@ const CRUD = () => {
         estructuraOptions,
         pisoOptions,
         tiposVOptions,
-        cargarDatos,
         crearItem,
         actualizarItem,
         eliminarItem,

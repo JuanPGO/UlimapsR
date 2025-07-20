@@ -21,7 +21,7 @@ const Welcome = () => {
                 <div className="divEncabezado">
                     <header className="encabezado">
                         <Link to="/login" className="boton-logo">
-                            <img src="/assets/img/fotos/escudo.png" alt="Escudo Unilibre" />
+                            <img src="/assets/images/fotos/escudo.png" alt="Escudo Unilibre" />
                         </Link>
                     </header>
                 </div>
@@ -36,7 +36,7 @@ const Welcome = () => {
 
             <div className="contenedor-interior2">
                 <div className="imagenCampus">
-                    <img src="/assets/img/fotos/fotoBienvenida.jpg" alt="Campus Belmonte ULibre" />
+                    <img src="/assets/images/fotos/fotoBienvenida.jpg" alt="Campus Belmonte ULibre" />
                 </div>
             </div>
         </div>

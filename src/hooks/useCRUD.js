@@ -92,7 +92,7 @@ export const useCRUD = () => {
     setLoading(true)
     try {
       const service = services[tipoSeleccionado]
-      const { data, error } = await service.create(formData)
+      const { error } = await service.create(formData)
       
       if (error) {
         toast.error(error.message || 'Error al crear elemento')
@@ -115,7 +115,7 @@ export const useCRUD = () => {
     setLoading(true)
     try {
       const service = services[tipoSeleccionado]
-      const { data, error } = await service.update(id, formData)
+      const { error } = await service.update(id, formData)
       
       if (error) {
         toast.error('Error al actualizar elemento')
@@ -138,7 +138,7 @@ export const useCRUD = () => {
     setLoading(true)
     try {
       const service = services[tipoSeleccionado]
-      const { data, error } = await service.delete(id)
+      const { error } = await service.delete(id)
       
       if (error) {
         toast.error('Error al eliminar elemento')
@@ -166,7 +166,7 @@ export const useCRUD = () => {
     setLoading(true)
     try {
       const service = services[tipoSeleccionado]
-      const { data, error } = await service.updateEstado(id, nuevoEstado)
+      const { error } = await service.updateEstado(id, nuevoEstado)
       
       if (error) {
         toast.error('Error al cambiar estado')
