@@ -7,8 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Pages
 import Welcome from './pages/Welcome/Welcome.jsx';
-import Login from '/pages/Login/Login.jsx';
-import Map from '/pages/Map/Map.jsx';
+import Login from './pages/Login/Login.jsx';
+import Map from './pages/Map/Map.jsx';
 import CRUD from './pages/CRUD/CRUD.jsx'; 
 import StructureDetail from './pages/StructureDetail/StructureDetail.jsx';
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
