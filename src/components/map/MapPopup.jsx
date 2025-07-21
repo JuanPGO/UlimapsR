@@ -1,10 +1,10 @@
 // src/components/map/MapPopup.jsx
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faInfo, faRoute } from '@fortawesome/free-solid-svg-icons'
+import { faInfo } from '@fortawesome/free-solid-svg-icons'
 import PropTypes from 'prop-types'
 
-const MapPopup = ({ punto, estructura, parqueadero, imagen, selectedDestination, activeMarkerId, onStartNavigation }) => {
+const MapPopup = ({ punto, estructura, parqueadero, imagen }) => {
   return (
     <div className="contenedorPop">
       <div className="headerPop">
@@ -57,15 +57,6 @@ const MapPopup = ({ punto, estructura, parqueadero, imagen, selectedDestination,
                 <span>Ver más</span>
               </button>
             </Link>
-            {(!selectedDestination || activeMarkerId !== punto.id_punto_exterior) && (
-              <button
-                onClick={() => onStartNavigation(punto)}
-                className="route-button"
-              >
-                <FontAwesomeIcon icon={faRoute} />
-                <span>Ir aquí</span>
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -88,10 +79,7 @@ MapPopup.propTypes = {
   }),
   imagen: PropTypes.shape({
     nombre: PropTypes.string
-  }),
-  selectedDestination: PropTypes.object,
-  activeMarkerId: PropTypes.number,
-  onStartNavigation: PropTypes.func.isRequired
+  })
 }
 
 export default MapPopup

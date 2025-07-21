@@ -69,8 +69,19 @@ body {
   text-align: center;
 }
 
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
 .pagination {
-  margin-top: 1rem;
+  --bs-pagination-active-bg: #616060;
+  --bs-pagination-active-border-color: #616060;
+  --bs-pagination-hover-bg: #4a4949;
+  --bs-pagination-hover-border-color: #4a4949;
+  margin-top: 0;
 }
 
 /* Modal customizations */
@@ -132,4 +143,9 @@ body {
 .btn-primary:hover {
   background-color: #4a4949;
   border-color: #4a4949;
+}
+
+/* Cambiar color de la flecha del dropdown a blanco */
+.nav-dropdown .dropdown-toggle::after {
+  border-top-color: white !important;
 }
