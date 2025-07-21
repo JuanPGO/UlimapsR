@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import './CRUD.css';
 import { useNavigate } from 'react-router-dom';
 import { Nav, NavDropdown, Table, Pagination, Modal, Form, Button } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightFromBracket, faBars, faKey, faMapLocationDot, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightFromBracket, faBars, faKey, faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useCRUD } from '../../hooks/useCRUD.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 
@@ -285,7 +285,11 @@ const CRUD = () => {
             {/* Header */}
             <div className="navHeader">
                 <Nav className="me-auto">
-                    <NavDropdown title={<FontAwesomeIcon icon={faBars} />} id="nav-dropdown">
+                    <NavDropdown 
+                        className="nav-dropdown"
+                        title={<FontAwesomeIcon style={{ cursor: 'pointer', color: 'white' }} icon={faBars} />} 
+                        id="nav-dropdown"
+                    >
                         <NavDropdown.Item eventKey="1.1" onClick={() => handleSelectChange('1.1')}>
                             Puntos Interes Exterior
                         </NavDropdown.Item>
@@ -312,12 +316,6 @@ const CRUD = () => {
                 </div>
 
                 <div className="navExit">
-                    <FontAwesomeIcon 
-                        icon={faMapLocationDot} 
-                        className="me-3" 
-                        style={{ cursor: 'pointer', color: 'white' }}
-                        onClick={() => navigate('/map')}
-                    />
                     <FontAwesomeIcon 
                         icon={faArrowRightFromBracket} 
                         style={{ cursor: 'pointer', color: 'white' }}
