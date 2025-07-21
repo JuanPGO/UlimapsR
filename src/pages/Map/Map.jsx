@@ -6,12 +6,10 @@ import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons'
 import { ToastContainer } from 'react-toastify'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import 'leaflet-routing-machine'
 import 'react-toastify/dist/ReactToastify.css'
 
 // Components
 import LocationControl from '../../components/map/LocationControl.jsx'
-import RoutingControl from '../../components/map/RoutingControl.jsx'
 import MapPopup from '../../components/map/MapPopup.jsx'
 
 // Hooks
@@ -32,16 +30,12 @@ const Map = () => {
     const {
         puntosExteriores,
         estructuras,
-        parqueaderos, // Agregar esta línea
+        parqueaderos,
         imagenes,
         userLocation,
-        selectedDestination,
-        activeMarkerId,
         loading,
         UNIVERSIDAD_COORDS,
         handleLocationFound,
-        handleStartNavigation,
-        handleCancelRoute,
         showInfoToast
     } = useMap()
 
@@ -109,15 +103,6 @@ const Map = () => {
                         onLocationFound={handleLocationFound} 
                         showInfoToast={showInfoToast}
                     />
-                    
-                    {/* Control de rutas */}
-                    {userLocation && selectedDestination && (
-                        <RoutingControl 
-                            userLocation={userLocation} 
-                            destination={selectedDestination}
-                            onCancelRoute={handleCancelRoute}
-                        />
-                    )}
 
                     {/* Marcadores de puntos exteriores */}
                     {puntosExteriores.map((punto) => (
@@ -133,9 +118,6 @@ const Map = () => {
                                         estructura={estructuras[punto.id_punto_exterior]}
                                         parqueadero={parqueaderos[punto.id_punto_exterior]}
                                         imagen={imagenes[punto.id_punto_exterior]}
-                                        selectedDestination={selectedDestination}
-                                        activeMarkerId={activeMarkerId}
-                                        onStartNavigation={handleStartNavigation}
                                     />
                                 </Popup>
                             </Marker>
