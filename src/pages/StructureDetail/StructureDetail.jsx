@@ -20,6 +20,19 @@ const StructureDetail = () => {
         renderTableRows
     } = useStructureDetail()
 
+    // Función para calcular el rango de páginas a mostrar
+    const getPageRange = (currentPage, totalPages, maxPagesToShow = 5) => {
+        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+        
+        // Ajustar si estamos muy cerca del final
+        if (endPage - startPage + 1 < maxPagesToShow) {
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+        
+        return { startPage, endPage };
+    };
+
     if (loading) {
         return (
             <div className="contenedorMore">
@@ -187,7 +200,7 @@ const StructureDetail = () => {
                                     </Table>
                                 </div>
                                 
-                                {/* Paginación */}
+                                {/* Paginación Mejorada */}
                                 {totalPages > 1 && (
                                     <div className="pagination-container">
                                         <Pagination>
@@ -200,18 +213,40 @@ const StructureDetail = () => {
                                                 disabled={currentPage === 1}
                                             />
                                             
-                                            {[...Array(totalPages)].map((_, index) => {
-                                                const pageNumber = index + 1
-                                                return (
-                                                    <Pagination.Item
-                                                        key={pageNumber}
-                                                        active={pageNumber === currentPage}
-                                                        onClick={() => paginate(pageNumber)}
-                                                    >
-                                                        {pageNumber}
-                                                    </Pagination.Item>
-                                                )
-                                            })}
+                                            {/* Mostrar "..." si hay páginas antes del rango */}
+                                            {(() => {
+                                                const { startPage, endPage } = getPageRange(currentPage, totalPages);
+                                                const pages = [];
+                                                
+                                                // Añadir "..." si startPage > 1
+                                                if (startPage > 1) {
+                                                    pages.push(
+                                                        <Pagination.Ellipsis key="start-ellipsis" disabled />
+                                                    );
+                                                }
+                                                
+                                                // Añadir páginas en el rango
+                                                for (let i = startPage; i <= endPage; i++) {
+                                                    pages.push(
+                                                        <Pagination.Item
+                                                            key={i}
+                                                            active={i === currentPage}
+                                                            onClick={() => paginate(i)}
+                                                        >
+                                                            {i}
+                                                        </Pagination.Item>
+                                                    );
+                                                }
+                                                
+                                                // Añadir "..." si endPage < totalPages
+                                                if (endPage < totalPages) {
+                                                    pages.push(
+                                                        <Pagination.Ellipsis key="end-ellipsis" disabled />
+                                                    );
+                                                }
+                                                
+                                                return pages;
+                                            })()}
                                             
                                             <Pagination.Next 
                                                 onClick={() => paginate(currentPage + 1)}

@@ -267,6 +267,19 @@ const CRUD = () => {
         );
     };
 
+    // Función para calcular el rango de páginas a mostrar
+    const getPageRange = (currentPage, totalPages, maxPagesToShow = 5) => {
+        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+        
+        // Ajustar si estamos muy cerca del final
+        if (endPage - startPage + 1 < maxPagesToShow) {
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+        
+        return { startPage, endPage };
+    };
+
     return (
         <div className="contenedorCrud">
             {/* Header */}
@@ -379,17 +392,64 @@ const CRUD = () => {
                         </Table>
 
                         {/* Paginación */}
-                        <Pagination className="justify-content-center">
-                            {Array.from({ length: totalPages }, (_, i) => (
-                                <Pagination.Item
-                                    key={i + 1}
-                                    active={i + 1 === currentPage}
-                                    onClick={() => setCurrentPage(i + 1)}
-                                >
-                                    {i + 1}
-                                </Pagination.Item>
-                            ))}
-                        </Pagination>
+                        {totalPages > 1 && (
+                            <div className="pagination-container">
+                                <Pagination>
+                                    <Pagination.First 
+                                        onClick={() => setCurrentPage(1)}
+                                        disabled={currentPage === 1}
+                                    />
+                                    <Pagination.Prev 
+                                        onClick={() => setCurrentPage(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                    />
+                                    
+                                    {/* Mostrar "..." si hay páginas antes del rango */}
+                                    {(() => {
+                                        const { startPage, endPage } = getPageRange(currentPage, totalPages);
+                                        const pages = [];
+                                        
+                                        // Añadir "..." si startPage > 1
+                                        if (startPage > 1) {
+                                            pages.push(
+                                                <Pagination.Ellipsis key="start-ellipsis" disabled />
+                                            );
+                                        }
+                                        
+                                        // Añadir páginas en el rango
+                                        for (let i = startPage; i <= endPage; i++) {
+                                            pages.push(
+                                                <Pagination.Item
+                                                    key={i}
+                                                    active={i === currentPage}
+                                                    onClick={() => setCurrentPage(i)}
+                                                >
+                                                    {i}
+                                                </Pagination.Item>
+                                            );
+                                        }
+                                        
+                                        // Añadir "..." si endPage < totalPages
+                                        if (endPage < totalPages) {
+                                            pages.push(
+                                                <Pagination.Ellipsis key="end-ellipsis" disabled />
+                                            );
+                                        }
+                                        
+                                        return pages;
+                                    })()}
+                                    
+                                    <Pagination.Next 
+                                        onClick={() => setCurrentPage(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                    />
+                                    <Pagination.Last 
+                                        onClick={() => setCurrentPage(totalPages)}
+                                        disabled={currentPage === totalPages}
+                                    />
+                                </Pagination>
+                            </div>
+                        )}
                     </>
                 )}
             </div>
