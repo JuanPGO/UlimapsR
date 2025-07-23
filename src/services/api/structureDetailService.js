@@ -173,7 +173,7 @@ export class StructureDetailService {
       const tieneParqueadero = puntosConInfo.parqueadero && puntosConInfo.parqueadero.length > 0
 
       // Tipos que solo deben mostrar fotos (no planos ni puntos de interés)
-      const tiposSoloFotos = [5, 14] // 5: Escenario Deportivo, 14: Zona de ingreso
+      const tiposSoloFotos = [5, 14, 10] // 5: Escenario Deportivo, 14: Zona de ingreso
       
       let soloMostrarFotos = false
       let tipoEstructura = null
