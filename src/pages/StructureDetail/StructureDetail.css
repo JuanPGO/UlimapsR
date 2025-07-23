@@ -93,6 +93,34 @@ body {
     font-family: "Kaisei Decol", serif;
 }
 
+.loading-container-structure {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    font-family: "Kaisei Decol", serif;
+    background: white; /* Fondo blanco como el del mapa */
+    color: #333; /* Texto oscuro para contraste */
+    border-radius: 0 0 15px 15px; /* Mantener el border radius del contenedor */
+}
+
+.loading-container-structure p {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+}
+
+/* Spinner personalizado igual al del mapa */
+.loading-container-structure .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.loading-container-structure .text-primary {
+    color: #c9081f !important;
+}
+
 .error-container h3 {
     margin-bottom: 1rem;
 }

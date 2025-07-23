@@ -181,6 +181,12 @@ body {
     font-size: 1.1rem;
 }
 
+.parqueaderoPop {
+    font-weight: bold;
+    color: #690410;
+    font-size: 1.1rem;
+}
+
 .buttonPop {
     display: flex;
     gap: 10px;

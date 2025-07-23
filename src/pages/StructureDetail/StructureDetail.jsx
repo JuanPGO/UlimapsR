@@ -36,11 +36,11 @@ const StructureDetail = () => {
     if (loading) {
         return (
             <div className="contenedorMore">
-                <div className="loading-container">
-                    <div className="spinner-border text-light" role="status">
+                <div className="loading-container-structure">
+                    <div className="spinner-border text-primary" role="status">
                         <span className="visually-hidden">Cargando...</span>
                     </div>
-                    <p className="text-light mt-3">Cargando información de la estructura...</p>
+                    <p>Cargando información de la estructura...</p>
                 </div>
             </div>
         )
